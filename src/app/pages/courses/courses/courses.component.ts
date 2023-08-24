@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, catchError, of } from 'rxjs';
 import { CoursesService } from 'src/app/core/services/courses.service';
 import { ErrorDialogTsComponent } from 'src/app/shared/components/error-dialog/error-dialog.ts.component';
@@ -11,11 +12,13 @@ import { Course } from 'src/app/shared/interfaces/course.interface';
   styleUrls: ['./courses.component.scss'],
 })
 export class CoursesComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'category'];
+  displayedColumns: string[] = ['name', 'category', 'actions'];
   courses$: Observable<Course[]>;
 
   constructor(
     private readonly courseService: CoursesService,
+    private readonly router: Router,
+    private readonly activatedRoute: ActivatedRoute,
     public dialog: MatDialog
     ) {
     this.courses$ = this.courseService.getCourses()
@@ -33,5 +36,10 @@ export class CoursesComponent implements OnInit {
     this.dialog.open(ErrorDialogTsComponent, {
       data: errorMessage
     })
+  }
+
+  onAdd(){
+    // aqui estou pegando a rota que já estou e agregando para a nova rota
+    this.router.navigate(['new'], {relativeTo: this.activatedRoute});
   }
 }
