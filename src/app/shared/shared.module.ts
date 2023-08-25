@@ -1,9 +1,9 @@
 import { NgModule } from "@angular/core";
 import { MaterialModule } from "./material/material.module";
 import { CommonModule } from "@angular/common";
-import { ErrorDialogTsComponent } from './components/error-dialog/error-dialog.ts.component';
-import { CategoryPipe } from './pipes/category.pipe';
+import { ErrorDialogTsComponent } from './view-components/error-dialog/error-dialog.ts.component';
 import { ReactiveFormsModule } from "@angular/forms";
+import { ConfirmDialogComponent } from './view-components/confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   imports: [
@@ -14,12 +14,11 @@ import { ReactiveFormsModule } from "@angular/forms";
   exports: [
     MaterialModule,
     ErrorDialogTsComponent,
-    CategoryPipe,
     ReactiveFormsModule
   ],
   declarations: [
     ErrorDialogTsComponent,
-    CategoryPipe
+    ConfirmDialogComponent
   ],
   providers: [],
 })

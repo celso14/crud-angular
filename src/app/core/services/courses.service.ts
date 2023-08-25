@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, delay, first, take, tap } from 'rxjs';
-import { Course } from 'src/app/shared/interfaces/course.interface';
+import { Observable, delay, first, firstValueFrom, retry, take, takeUntil, tap, timeout } from 'rxjs';
+import { Course } from 'src/app/core/interfaces/course.interface';
 import { API_URL } from 'src/env/enviroments';
 
 @Injectable({
@@ -23,9 +23,26 @@ export class CoursesService {
     );
   }
 
+  findCourse(id: number): Observable<Course>{
+    return this.httpClient.get<Course>(`${this.API_ROUTE}/${id}`)
+    .pipe(
+      first(),
+      timeout(30000),
+      retry(3)
+    );
+  }
+
   saveCourse(course: Partial<Course>): Observable<Course>{
     return this.httpClient.post<Course>(this.API_ROUTE, course).pipe(
       first()
     );
+  }
+
+  editCourse(id:number , course: Partial<Course>): Observable<void>{
+    return this.httpClient.put<void>(`${this.API_ROUTE}/${id}`, course).pipe(first());
+  }
+
+  deleteCourse(id: number): Observable<void>{
+    return this.httpClient.delete<void>(`${this.API_ROUTE}/${id}`).pipe(first());
   }
 }

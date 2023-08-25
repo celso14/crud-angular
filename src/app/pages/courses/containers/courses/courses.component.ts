@@ -3,8 +3,8 @@ import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, catchError, of } from 'rxjs';
 import { CoursesService } from 'src/app/core/services/courses.service';
-import { ErrorDialogTsComponent } from 'src/app/shared/components/error-dialog/error-dialog.ts.component';
-import { Course } from 'src/app/shared/interfaces/course.interface';
+import { ErrorDialogTsComponent } from 'src/app/shared/view-components/error-dialog/error-dialog.ts.component';
+import { Course } from 'src/app/core/interfaces/course.interface';
 
 @Component({
   selector: 'app-courses',
@@ -12,6 +12,7 @@ import { Course } from 'src/app/shared/interfaces/course.interface';
   styleUrls: ['./courses.component.scss'],
 })
 export class CoursesComponent implements OnInit {
+
   displayedColumns: string[] = ['name', 'category', 'actions'];
   courses$: Observable<Course[]>;
 
@@ -30,7 +31,8 @@ export class CoursesComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   onError(errorMessage: string) {
     this.dialog.open(ErrorDialogTsComponent, {
@@ -41,5 +43,20 @@ export class CoursesComponent implements OnInit {
   onAdd(){
     // aqui estou pegando a rota que já estou e agregando para a nova rota
     this.router.navigate(['new'], {relativeTo: this.activatedRoute});
+  }
+
+  onDelete(event: any){
+    if(event.result){
+      try {
+        this.courseService.deleteCourse(event.id)
+      }
+      catch {
+        this.onError("Erro ao deletar um curso!");
+      }
+    }
+  }
+
+  onEdit(event: any){
+    // this.router.navigate()
   }
 }
