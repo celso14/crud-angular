@@ -38,11 +38,13 @@ export class CoursesService {
     );
   }
 
-  editCourse(id:number , course: Partial<Course>): Observable<void>{
-    return this.httpClient.put<void>(`${this.API_ROUTE}/${id}`, course).pipe(first());
+  editCourse(id:number , course: Partial<Course>): Promise<Course>{
+    // firstValueFrom permite tratar um observable como uma promise
+    // sempre usar uma promise quando não for receber uma stream de dados
+    return firstValueFrom(this.httpClient.put<Course>(`${this.API_ROUTE}/${id}`, course));
   }
 
-  deleteCourse(id: number): Observable<void>{
-    return this.httpClient.delete<void>(`${this.API_ROUTE}/${id}`).pipe(first());
+  deleteCourse(id: number): Promise<void>{
+    return firstValueFrom(this.httpClient.delete<void>(`${this.API_ROUTE}/${id}`));
   }
 }

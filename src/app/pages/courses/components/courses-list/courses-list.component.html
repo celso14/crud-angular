@@ -21,7 +21,7 @@
     </mat-header-cell>
 
     <mat-cell *matCellDef="let course" style="padding: 4px;">
-      <button (click)="onEdit(course.id)" mat-icon-button color="primary" aria-label="Editar">
+      <button (click)="onEdit(course)" mat-icon-button color="primary" aria-label="Editar">
         <mat-icon>edit</mat-icon>
       </button>
       <button (click)="onDelete(course.id)" mat-icon-button color="warn" aria-label="Remover">

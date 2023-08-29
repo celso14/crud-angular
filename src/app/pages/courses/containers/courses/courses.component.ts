@@ -45,10 +45,11 @@ export class CoursesComponent implements OnInit {
     this.router.navigate(['new'], {relativeTo: this.activatedRoute});
   }
 
-  onDelete(event: any){
+  async onDelete(event: any){
+    console.log(event)
     if(event.result){
       try {
-        this.courseService.deleteCourse(event.id)
+        await this.courseService.deleteCourse(event.id)
       }
       catch {
         this.onError("Erro ao deletar um curso!");
@@ -56,7 +57,8 @@ export class CoursesComponent implements OnInit {
     }
   }
 
-  onEdit(event: any){
-    // this.router.navigate()
+  onEdit(course: Course){
+    console.log(course)
+    this.router.navigate(['courses/edit/', course.id], {queryParams: course});
   }
 }

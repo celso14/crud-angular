@@ -18,7 +18,7 @@ export class CoursesListComponent implements OnInit{
   add = new EventEmitter<boolean>();
 
   @Output()
-  edit = new EventEmitter<number>();
+  edit = new EventEmitter<Course>();
 
   @Output()
   delete = new EventEmitter<{result: boolean, id: number}>();
@@ -36,8 +36,8 @@ export class CoursesListComponent implements OnInit{
     this.add.emit(true);
   }
 
-  onEdit(id: number){
-    this.edit.emit(id);
+  onEdit(course: Course){
+    this.edit.emit(course);
   }
 
   onDelete(id: number){

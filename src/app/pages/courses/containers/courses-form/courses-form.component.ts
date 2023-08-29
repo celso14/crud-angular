@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Form, FormBuilder, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
+import { Course } from 'src/app/core/interfaces/course.interface';
 import { CoursesService } from 'src/app/core/services/courses.service';
 
 @Component({
@@ -18,38 +19,63 @@ export class CoursesFormComponent implements OnInit{
 
   categories = ['Front-End', 'Back-End', 'Full-Stack']
 
+  isEdit: boolean = false;
+  courseId: number = 0;
+
   constructor(
     private formBuilder: NonNullableFormBuilder,
     private readonly courseService: CoursesService,
     private _snackbar: MatSnackBar,
     private readonly router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
 
   }
 
   ngOnInit(): void {
+    this.activatedRoute.params.subscribe((params) => {
+      if (params['id']) {
+        this.activatedRoute.queryParams.subscribe((params) => {
+          this.isEdit = true;
+          this.courseId = params['id'];
+          this.form.setValue({
+            name: params['name'],
+            category: params['category']
+          })
+        })
+      }
+    });
   }
 
-  onSubmit(){
-    // if(this.form){
-
-    // }
-    this.courseService.saveCourse(this.form.value).subscribe(
-      res => this.onSuccess(),
-      error => this.onError()
-    );
+  async onSubmit(){
+    if(this.isEdit){
+      await this.courseService.editCourse(this.courseId, this.form.value).then(
+        res => this.onSuccess(),
+      )
+      .catch(
+        error => this.onError()
+      )
+    }
+    else{
+      this.courseService.saveCourse(this.form.value).subscribe(
+        res => this.onSuccess(),
+        error => this.onError()
+      );
+    }
   }
 
   onCancel(){
-    //TODO CANCEL
+    this.router.navigate(['/courses']);
   }
 
   private onSuccess(){
-    this._snackbar.open('Curso salvo com sucesso!', 'Fechar', {duration: 5000})
+    const message = this.isEdit ? 'Curso editado com sucesso!' : 'Curso salvo com sucesso!';
+    this._snackbar.open(message, 'Fechar', {duration: 5000})
     this.router.navigate(['/courses']);
   }
 
   private onError(){
-    this._snackbar.open('Error ao salvar o curso!', 'Fechar', {duration: 5000})
+    const message = this.isEdit ? 'Erro ao editar o curso!' : 'Erro ao salvar o curso!';
+    this._snackbar.open(message, 'Fechar', {duration: 5000})
   }
 }
