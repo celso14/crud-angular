@@ -10,14 +10,14 @@ import { CoursesService } from 'src/app/core/services/courses.service';
   templateUrl: './courses-form.component.html',
   styleUrls: ['./courses-form.component.scss']
 })
-export class CoursesFormComponent implements OnInit{
+export class CoursesFormComponent implements OnInit {
 
   form = this.formBuilder.group({
-    name: [''],
-    category: ['']
+    name: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
+    category: ['', [Validators.required]]
   });
 
-  categories = ['Front-End', 'Back-End', 'Full-Stack']
+  categories = ['Front-End', 'Back-End']
 
   isEdit: boolean = false;
   courseId: number = 0;
@@ -47,16 +47,16 @@ export class CoursesFormComponent implements OnInit{
     });
   }
 
-  async onSubmit(){
-    if(this.isEdit){
+  async onSubmit() {
+    if (this.isEdit) {
       await this.courseService.editCourse(this.courseId, this.form.value).then(
         res => this.onSuccess(),
       )
-      .catch(
-        error => this.onError()
-      )
+        .catch(
+          error => this.onError()
+        )
     }
-    else{
+    else {
       this.courseService.saveCourse(this.form.value).subscribe(
         res => this.onSuccess(),
         error => this.onError()
@@ -64,18 +64,18 @@ export class CoursesFormComponent implements OnInit{
     }
   }
 
-  onCancel(){
+  onCancel() {
     this.router.navigate(['/courses']);
   }
 
-  private onSuccess(){
+  private onSuccess() {
     const message = this.isEdit ? 'Curso editado com sucesso!' : 'Curso salvo com sucesso!';
-    this._snackbar.open(message, 'Fechar', {duration: 5000})
+    this._snackbar.open(message, 'Fechar', { duration: 5000 })
     this.router.navigate(['/courses']);
   }
 
-  private onError(){
+  private onError() {
     const message = this.isEdit ? 'Erro ao editar o curso!' : 'Erro ao salvar o curso!';
-    this._snackbar.open(message, 'Fechar', {duration: 5000})
+    this._snackbar.open(message, 'Fechar', { duration: 5000 })
   }
 }
