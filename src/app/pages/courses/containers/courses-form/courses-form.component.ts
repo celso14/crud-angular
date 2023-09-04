@@ -3,6 +3,7 @@ import { Form, FormBuilder, FormGroup, NonNullableFormBuilder, Validators } from
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { Course } from 'src/app/core/interfaces/course.interface';
+import { Lesson } from 'src/app/core/interfaces/lesson.interface';
 import { CoursesService } from 'src/app/core/services/courses.service';
 
 @Component({
@@ -12,10 +13,12 @@ import { CoursesService } from 'src/app/core/services/courses.service';
 })
 export class CoursesFormComponent implements OnInit {
 
-  form = this.formBuilder.group({
-    name: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
-    category: ['', [Validators.required]]
-  });
+  form!: FormGroup;
+
+  // form = this.formBuilder.group({
+  //   name: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
+  //   category: ['', [Validators.required]]
+  // });
 
   categories = ['Front-End', 'Back-End']
 
@@ -33,17 +36,52 @@ export class CoursesFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.form = this.formBuilder.group({
+      name: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
+      category: ['', [Validators.required]],
+      lessons: this.formBuilder.array([])
+    });
+
     this.activatedRoute.params.subscribe((params) => {
       if (params['id']) {
-        this.activatedRoute.queryParams.subscribe((params) => {
+        this.activatedRoute.queryParams.subscribe((queryParams) => {
           this.isEdit = true;
-          this.courseId = params['id'];
+          this.courseId = queryParams['id'];
+          const course: Course = {
+            id: queryParams['id'],
+            name: queryParams['name'],
+            category: queryParams['category'],
+            lessons: queryParams['lessons']
+          }
           this.form.setValue({
-            name: params['name'],
-            category: params['category']
+            name: queryParams['name'],
+            category: queryParams['category'],
+            lessons: this.retriveLessons(course)
           })
+          console.log(this.form.value)
         })
       }
+    });
+  }
+
+  private retriveLessons(course: Course) {
+    const lessons = [];
+
+    if(course?.lessons){
+      course.lessons.forEach(lesson => lessons.push(this.createLessonForm(lesson)));
+    }
+    else{
+      lessons.push(this.createLessonForm);
+    }
+
+    return lessons;
+  }
+
+  private createLessonForm(lesson: Lesson = {id: null, name: '', ytUrl: ''}): FormGroup {
+    return this.formBuilder.group({
+      id: [lesson.id],
+      name: [lesson.name, Validators.required],
+      ytUrl: [lesson.ytUrl, Validators.required]
     });
   }
 
